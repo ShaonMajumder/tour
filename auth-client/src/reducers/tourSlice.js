@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk, isAllOf, current } from "@reduxjs/toolkit";
-import apiClient,{booksApi, book_url} from "../services/api";
+import apiClient,{toursApi, tour_url} from "../services/api";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import {useHistory} from 'react-router-dom';
 import store from "../store";
-import { useBooksQuery } from "../services/api";
+import { useToursQuery } from "../services/api";
 const initialState = {
-  bookItems: [],
+  tourItems: [],
   total: 0,
   per_page : 0,
   current_page : 1,
@@ -17,7 +17,7 @@ const initialState = {
 
 
 //Fetch
-// export const getBookItems = createAsyncThunk("book/getBookItems", () => {
+// export const getTourItems = createAsyncThunk("tour/getTourItems", () => {
 //   return fetch(url)
 //     .then((resp) => resp.json())
 //     .catch((err) => console.log(err));
@@ -25,15 +25,15 @@ const initialState = {
 
 //Axios
 // ThunkAPI can get the state of the APP and access andinvoke functions on the state
-export const getBookItems = createAsyncThunk(
-  "book/getBookItems",
+export const getTourItems = createAsyncThunk(
+  "tour/getTourItems",
   async (name, thunkAPI) => {
     try {
       apiClient.interceptors.request.use(config => {
         config.headers['Authorization'] = `Bearer ${Cookies.get('access_token')}`;
         return config;
       });
-      const resp = await apiClient.get(book_url);
+      const resp = await apiClient.get(tour_url);
       return resp.data;
     } catch (error) {
       return thunkAPI.rejectWithValue("something went wrong");
@@ -41,16 +41,16 @@ export const getBookItems = createAsyncThunk(
   }
 );
 
-const bookSlice = createSlice({
-  name: "book",
+const tourSlice = createSlice({
+  name: "tour",
   initialState,
   reducers: {
-    clearBookList: (state) => {
-      state.bookItems = [];
+    clearTourList: (state) => {
+      state.tourItems = [];
     },
     removeItem: (state, action) => {
       const itemId = action.payload;
-      state.bookItems = state.bookItems.filter((item) => item.id !== itemId);
+      state.tourItems = state.tourItems.filter((item) => item.id !== itemId);
     },
     setPageItem: (state,action) => {
       // state.current_page = action.payload
@@ -58,7 +58,7 @@ const bookSlice = createSlice({
         ...state,
         current_page : action.payload
       }
-      // console.log(useBooksQuery(action.payload))
+      // console.log(useToursQuery(action.payload))
     },
     setLoggedIn: (state) => {
       state.isLoggedIn = true
@@ -74,40 +74,40 @@ const bookSlice = createSlice({
     
     builder
     .addMatcher(
-      isAllOf(booksApi.endpoints.books.matchFulfilled),
+      isAllOf(toursApi.endpoints.tours.matchFulfilled),
       (state, payload ) => {
-        console.log('createApi -> extraReducers -> Books Index Listener, state and payload',state,payload)
+        console.log('createApi -> extraReducers -> Tours Index Listener, state and payload',state,payload)
         //setting responsed data to store by api endpoints rtk-query listener
         return {
           ...state,
-          bookItems : payload.payload.data.books.data,
-          total : payload.payload.data.books.total,
-          per_page : payload.payload.data.books.per_page,
-          current_page : payload.payload.data.books.current_page,
-          last_page : payload.payload.data.books.last_page
+          tourItems : payload.payload.data.tours.data,
+          total : payload.payload.data.tours.total,
+          per_page : payload.payload.data.tours.per_page,
+          current_page : payload.payload.data.tours.current_page,
+          last_page : payload.payload.data.tours.last_page
         }
       }
     )
     .addMatcher(
-      isAllOf(booksApi.endpoints.addBook.matchFulfilled),
+      isAllOf(toursApi.endpoints.addTour.matchFulfilled),
       (state, payload ) => {
-        const { bookItems, total } = current(state)
+        const { tourItems, total } = current(state)
         // return {
-        //   bookItems: bookItems.push(),
+        //   tourItems: tourItems.push(),
         //   total: total + 1
         // }
       }
     )
     .addMatcher(
-      isAllOf(booksApi.endpoints.updateBook.matchFulfilled),
+      isAllOf(toursApi.endpoints.updateTour.matchFulfilled),
       (state, payload ) => {
-        // const { bookItems, total } = current(state)
+        // const { tourItems, total } = current(state)
         // const id = payload.payload.originalArg.id
         // const payload_data = payload.payload.data.data
         
         // return {
         //   ...state,
-        //   bookItems : bookItems.map((item, index) => {
+        //   tourItems : tourItems.map((item, index) => {
         //     if( item.id == id){
         //       return payload_data
         //     }else{
@@ -119,34 +119,34 @@ const bookSlice = createSlice({
       }
     )
     .addMatcher(
-      isAllOf(booksApi.endpoints.deleteBook.matchFulfilled),
+      isAllOf(toursApi.endpoints.deleteTour.matchFulfilled),
       (state, payload ) => {
-        // let bookId = payload.payload.originalArg
+        // let tourId = payload.payload.originalArg
         // console.log('Delete Listner',payload.payload.data)
-        // const { bookItems, total } = current(state)
+        // const { tourItems, total } = current(state)
         // return {
-        //   bookItems: bookItems.filter(book => book.id !== bookId),
+        //   tourItems: tourItems.filter(tour => tour.id !== tourId),
         //   total: total - 1
         // }
       }
     )
     .addMatcher(
-      isAllOf(booksApi.endpoints.deleteBook.matchRejected),
+      isAllOf(toursApi.endpoints.deleteTour.matchRejected),
       (state, payload ) => {
         
       }
     )
   },
   // {
-  //   [getBookItems.pending]: (state) => {
+  //   [getTourItems.pending]: (state) => {
   //     state.isLoading = true;
   //   },
-  //   [getBookItems.fulfilled]: (state, action) => {
+  //   [getTourItems.fulfilled]: (state, action) => {
   //     console.log(action);
   //     state.isLoading = false;
-  //     state.bookItems = action.payload.data.books.data
+  //     state.tourItems = action.payload.data.tours.data
   //   },
-  //   [getBookItems.rejected]: (state, action) => {
+  //   [getTourItems.rejected]: (state, action) => {
   //     console.log(action);
   //     state.isLoading = false;
   //   },
@@ -157,7 +157,7 @@ const bookSlice = createSlice({
 
 
 
-//console.log(bookSlice);
-export const { clearBookList, nextPage,removeItem, setLoggedIn, setLoggedOut, setPageItem } = bookSlice.actions;
+//console.log(tourSlice);
+export const { clearTourList, nextPage,removeItem, setLoggedIn, setLoggedOut, setPageItem } = tourSlice.actions;
 
-export default bookSlice.reducer;
+export default tourSlice.reducer;

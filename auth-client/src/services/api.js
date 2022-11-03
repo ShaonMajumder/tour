@@ -8,27 +8,27 @@ export const client_url = process.env.REACT_APP_CLIENT_URL || "http://localhost:
 export const login_url = process.env.REACT_APP_LOGIN_URL || "api/login"
 export const logout_url = process.env.REACT_APP_LOGOUT_URL || "api/logout"
 export const csrf_token_url = process.env.REACT_APP_CSRF_TOKEN_URL || "/sanctum/csrf-cookie"
-export const book_url = process.env.REACT_APP_BOOK_URL || "/api/books"
-export const get_book_url = process.env.REACT_APP_BOOK_GET_URL || "/api/books"
-export const book_create_url = process.env.REACT_APP_BOOK_CREATE_URL || "/api/books/add"
-export const book_delete_url = process.env.REACT_APP_BOOK_DELETE_URL || "/api/books/delete"
+export const tour_url = process.env.REACT_APP_BOOK_URL || "/api/tours"
+export const get_tour_url = process.env.REACT_APP_BOOK_GET_URL || "/api/tours"
+export const tour_create_url = process.env.REACT_APP_BOOK_CREATE_URL || "/api/tours/add"
+export const tour_delete_url = process.env.REACT_APP_BOOK_DELETE_URL || "/api/tours/delete"
 
 function providesList(resultsWithIds, tagType) {
     return resultsWithIds
       ? [
           { type: tagType, id: 'LIST' },
-          ...resultsWithIds.data.books.data.map(({ id }) => ({ type: tagType, id })),
+          ...resultsWithIds.data.tours.data.map(({ id }) => ({ type: tagType, id })),
         ]
       : [{ type: tagType, id: 'LIST' }]
 }
 
 // Define a service using a base URL and expected endpoints
-export const booksApi = createApi({
-    reducerPath: "booksApi",
+export const toursApi = createApi({
+    reducerPath: "toursApi",
     baseQuery: fetchBaseQuery({
         baseUrl: `${api_url}/api`,
         prepareHeaders: (headers, { getState }) => {
-            // const isLoggedIn = getState().books.isLoggedIn
+            // const isLoggedIn = getState().tours.isLoggedIn
             const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true' || false
             headers.set('Access-Control-Allow-Origin', client_url)
             headers.set('Content-Type', 'application/json')
@@ -47,70 +47,70 @@ export const booksApi = createApi({
             return headers
         }
     }),
-    tagTypes: ['Book', 'User'],
+    tagTypes: ['Tour', 'User'],
     endpoints: (builder) => ({
-        books: builder.query({
+        tours: builder.query({
             query: (page = 1) => {
                 // console.log("OK");
-                return `/books?page=${page}`;
+                return `/tours?page=${page}`;
             },
-            providesTags: (result) => providesList(result, 'Book'),
-            // providesTags: ['Book'],
+            providesTags: (result) => providesList(result, 'Tour'),
+            // providesTags: ['Tour'],
             // providesTags: (result, error, page) => 
             //     result
             //     ? [
             //         // Provides a tag for each post in the current page,
             //         // as well as the 'PARTIAL-LIST' tag.
-            //         ...result.data.books.data.map(({ id }) => ({ type: 'Book', id })),
-            //         { type: 'Book', id: 'PARTIAL-LIST' },
+            //         ...result.data.tours.data.map(({ id }) => ({ type: 'Tour', id })),
+            //         { type: 'Tour', id: 'PARTIAL-LIST' },
             //         ]
-            //     : [{ type: 'Book', id: 'PARTIAL-LIST' }],
+            //     : [{ type: 'Tour', id: 'PARTIAL-LIST' }],
 
 
         }),
-        addBook: builder.mutation({
-            query: (book) => ({
-                url : '/books/add',
+        addTour: builder.mutation({
+            query: (tour) => ({
+                url : '/tours/add',
                 method: "POST",
-                body: book
+                body: tour
             }),
             transformResponse: (response, meta, arg) => response,
             
             // invalidatesTags: (result, error, id) => [
-            //     { type: 'Book', id },
-            //     { type: 'Book', id: 'LIST' },
+            //     { type: 'Tour', id },
+            //     { type: 'Tour', id: 'LIST' },
             //   ],
-            //   invalidatesTags: [{ type: 'Book', id: 'LIST' },10],
-            invalidatesTags: ['Book'], // after creation invalidatesTags, refetch to first page,try sending to last 
+            //   invalidatesTags: [{ type: 'Tour', id: 'LIST' },10],
+            invalidatesTags: ['Tour'], // after creation invalidatesTags, refetch to first page,try sending to last 
         }),
-        updateBook: builder.mutation({
+        updateTour: builder.mutation({
             query: (rest ) => ({
-                url : `books/update/${rest.id}`,
+                url : `tours/update/${rest.id}`,
                 method : 'PUT',
                 body : rest
             }),
             // transformResponse: (response, meta, arg) => response,
             transformResponse: (response, meta, arg) => {
-                // console.log('deleteBook => transformResponse')
+                // console.log('deleteTour => transformResponse')
                 return {
                     originalArg: arg,
                     data: response,
                 }
             },
-            invalidatesTags: (result, error, arg) => [{ type: 'Book', id: arg.id }], // done
+            invalidatesTags: (result, error, arg) => [{ type: 'Tour', id: arg.id }], // done
         }),
-        deleteBook: builder.mutation({
+        deleteTour: builder.mutation({
             query: (id) => ({
-                url : `books/delete/${id}`,
+                url : `tours/delete/${id}`,
                 method: 'DELETE'
             }),
             invalidatesTags: (result, error, id) => [
-                { type: 'Book', id },
-                { type: 'Book', id: 'PARTIAL-LIST' },
+                { type: 'Tour', id },
+                { type: 'Tour', id: 'PARTIAL-LIST' },
               ], // done
         
             transformResponse: (response, meta, arg) => {
-                // console.log('deleteBook => transformResponse')
+                // console.log('deleteTour => transformResponse')
                 return {
                     originalArg: arg,
                     data: response,
@@ -122,9 +122,9 @@ export const booksApi = createApi({
             ) {
                 
                 // console.log('getState onQueryStarted',getState())
-                // console.log('deleteBook => onQueryStarted, arg',arg)
+                // console.log('deleteTour => onQueryStarted, arg',arg)
                 queryFulfilled.then(()=>{
-                // console.log('deleteBook => onQueryStarted getState()',requestId,getState())
+                // console.log('deleteTour => onQueryStarted getState()',requestId,getState())
                 
                 })
             },
@@ -138,11 +138,11 @@ export const {
     reducer, 
     middleware,
     
-    useBooksQuery,
-    useAddBookMutation,
-    useDeleteBookMutation,
-    useUpdateBookMutation
-} = booksApi;
+    useToursQuery,
+    useAddTourMutation,
+    useDeleteTourMutation,
+    useUpdateTourMutation
+} = toursApi;
 
 
 

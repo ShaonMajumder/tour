@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, NavLink, useHistory } from 'react-router-dom';
-import BookList from './components/Books.component';
-import CreateBook from './components/Create.component';
-import EditBook from './components/Edit.component';
+import TourList from './components/Tours.component';
+import CreateTour from './components/Create.component';
+import EditTour from './components/Edit.component';
 import Login from './components/Login';
 import apiClient, { logout_url } from './services/api';
 import Cookies from 'js-cookie';
 // import { useEffect } from "react";
-// import { getBookItems } from "./reducers/bookSlice";
+// import { getTourItems } from "./reducers/tourSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoggedIn, setLoggedOut} from './reducers/bookSlice';
+import { setLoggedIn, setLoggedOut} from './reducers/tourSlice';
 import  './resources/app.scss';
 
 const App = () => {
   const [page, setPage] = useState(1);
-  const [bookItems, setBookItems] = useState([])
+  const [tourItems, setTourItems] = useState([])
   const dispatch = useDispatch();
   
   
@@ -38,13 +38,13 @@ const App = () => {
     })
   };
   
-  // const { bookItems, isLoading } = useSelector((store) => store.books);import { useDispatch, useSelector } from "react-redux";
+  // const { tourItems, isLoading } = useSelector((store) => store.tours);import { useDispatch, useSelector } from "react-redux";
   // const dispatch = useDispatch();
 
   
   // useEffect(() => {
   //   if(loggedIn){
-  //     dispatch(getBookItems());
+  //     dispatch(getTourItems());
   //   }
   // }, []);
   
@@ -57,7 +57,7 @@ const App = () => {
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <NavLink to='/' className="nav-link">Books</NavLink>
+              <NavLink to='/' className="nav-link">Tours</NavLink>
             </li>
             <li className="nav-item">
               {authLink}
@@ -68,16 +68,16 @@ const App = () => {
       <div className="container mt-5 pt-5">
         <Switch>
           <Route path='/' exact render={props => (
-            <BookList {...props} loggedIn={loggedIn} history={useHistory} page={page} setPage={setPage} bookItems={bookItems} setBookItems={setBookItems}  />
+            <TourList {...props} loggedIn={loggedIn} history={useHistory} page={page} setPage={setPage} tourItems={tourItems} setTourItems={setTourItems}  />
           )} />
           <Route path='/login' render={props => (
             <Login {...props} login={login} />
           )} />
-          <Route path='/books/create' render={props => (
-            <CreateBook history={useHistory} page={page} setPage={setPage}  />
+          <Route path='/tours/create' render={props => (
+            <CreateTour history={useHistory} page={page} setPage={setPage}  />
           )} />
-          <Route path='/books/update/:id' render={props => (
-            <EditBook {...props}  history={useHistory} page={page} setPage={setPage} bookItems={bookItems} setBookItems={setBookItems} props={[setBookItems]}/>
+          <Route path='/tours/update/:id' render={props => (
+            <EditTour {...props}  history={useHistory} page={page} setPage={setPage} tourItems={tourItems} setTourItems={setTourItems} props={[setTourItems]}/>
           )} />
         </Switch>
       </div>

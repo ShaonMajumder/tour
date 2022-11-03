@@ -5,15 +5,41 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Swal from 'sweetalert2';
 import { Redirect, useHistory } from 'react-router-dom';
-import apiClient, { booksApi, book_create_url, useAddBookMutation } from '../services/api';
+import apiClient, { toursApi, tour_create_url, useAddTourMutation } from '../services/api';
 import store from "../store";
+import DateTimePicker from 'react-datetime-picker';
+import MapPicker from 'react-google-map-picker'
 
+const DefaultLocation = { lat: 10, lng: 106};
+const DefaultZoom = 10;
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000"
 
-export default function CreateBook(props) {
-  const { refetch } = booksApi.endpoints.books.useQuerySubscription(props.page)
-  const [addBook, { isLoading2 }] = useAddBookMutation()
+export default function CreateTour(props) {
+  const [datetime, setDatetime] = useState(new Date());
+
+  const [defaultLocation, setDefaultLocation] = useState(DefaultLocation);
+
+  const [location, setLocation] = useState(defaultLocation);
+  const [zoom, setZoom] = useState(DefaultZoom);
+
+  function handleChangeLocation (lat, lng){
+    setLocation({lat:lat, lng:lng});
+  }
+  
+  function handleChangeZoom (newZoom){
+    setZoom(newZoom);
+  }
+
+  function handleResetLocation(){
+    setDefaultLocation({ ... DefaultLocation});
+    setZoom(DefaultZoom);
+  }
+
+  
+  
+  const { refetch } = toursApi.endpoints.tours.useQuerySubscription(props.page)
+  const [addTour, { isLoading2 }] = useAddTourMutation()
   // const page = props.page;
   // const setPage = props.setPage;
   const history = props.history()
@@ -45,7 +71,7 @@ export default function CreateBook(props) {
       'author' : author
     }
 
-    await addBook(json_data).unwrap()
+    await addTour(json_data).unwrap()
     .then((payload) => {
       console.log('success creation',payload)
       Swal.fire({
@@ -54,7 +80,7 @@ export default function CreateBook(props) {
       })
       
       // refetch()
-      let last_page = store.getState().books.last_page
+      let last_page = store.getState().tours.last_page
       props.setPage(last_page)
       
       history.push('/')
@@ -62,13 +88,31 @@ export default function CreateBook(props) {
     .catch((error) => console.error('rejected', error))
   }
 
+  // Google Map Picker
+  // return (
+  //   <>
+  // <button onClick={handleResetLocation}>Reset Location</button>
+  // <label>Latitute:</label><input type='text' value={location.lat} disabled/>
+  // <label>Longitute:</label><input type='text' value={location.lng} disabled/>
+  // <label>Zoom:</label><input type='text' value={zoom} disabled/>
+  
+  // <MapPicker defaultLocation={defaultLocation}
+  //   zoom={zoom}
+  //   mapTypeId="roadmap"
+  //   style={{height:'700px'}}
+  //   onChangeLocation={handleChangeLocation} 
+  //   onChangeZoom={handleChangeZoom}
+  //   apiKey='AIzaSyD07E1VvpsN_0FvsmKAj4nK9GnLq-9jtj8'/>
+  // </>
+  // );
+
   return (
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-12 col-sm-12 col-md-6">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Create Book</h4>
+              <h4 className="card-title">Plan A Tour</h4>
               <hr />
               <div className="form-wrapper">
                 {
@@ -98,6 +142,27 @@ export default function CreateBook(props) {
                             }}/>
                         </Form.Group>
                       </Col>  
+                  </Row>
+                  <Row className="my-3">
+                      <Col>
+                        <Form.Group controlId="Duration">
+                            <Form.Label>Duration : </Form.Label>
+                            {/* <Form.Control as="textarea" rows={3} value={author} onChange={(event)=>{
+                              setAuthor(event.target.value)
+                            }}/> */}
+                            <DateTimePicker onChange={setDatetime} value={datetime} /> - <DateTimePicker onChange={setDatetime} value={datetime} />
+                        </Form.Group>
+                      </Col>
+                  </Row>
+                  <Row className="my-3">
+                      <Col>
+                        <Form.Group controlId="Author">
+                            <Form.Label>Place</Form.Label>
+                            <Form.Control as="textarea" rows={3} value={author} onChange={(event)=>{
+                              setAuthor(event.target.value)
+                            }}/>
+                        </Form.Group>
+                      </Col>
                   </Row>
                   <Row className="my-3">
                       <Col>

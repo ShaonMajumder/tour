@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import bookReducer from "./reducers/bookSlice";
-import { booksApi } from "./services/api";
+import tourReducer from "./reducers/tourSlice";
+import { toursApi } from "./services/api";
 import React from "react";
 
 const initialState = {
@@ -13,11 +13,11 @@ export const AuthContext = React.createContext(initialState);
 
 const store = configureStore({
   reducer: {
-    books: bookReducer,
-    [booksApi.reducerPath]: booksApi.reducer,
+    tours: tourReducer,
+    [toursApi.reducerPath]: toursApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(booksApi.middleware)
+    getDefaultMiddleware().concat(toursApi.middleware)
 });
 
 export default store;

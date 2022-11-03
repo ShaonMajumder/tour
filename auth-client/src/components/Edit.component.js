@@ -6,23 +6,23 @@ import Col from 'react-bootstrap/Col';
 import { Redirect, useParams } from 'react-router-dom'
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import apiClient, { booksApi, book_create_url,get_book_url, useUpdateBookMutation } from '../services/api';
+import apiClient, { toursApi, tour_create_url,get_tour_url, useUpdateTourMutation } from '../services/api';
 import store from "../store";
-import { setPageItem } from "../reducers/bookSlice";
+import { setPageItem } from "../reducers/tourSlice";
 import { useDispatch } from "react-redux";
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000"
 
 
-export default function EditBook(props) {
-  const { refetch } = booksApi.endpoints.books.useQuerySubscription(props.page)
+export default function EditTour(props) {
+  const { refetch } = toursApi.endpoints.tours.useQuerySubscription(props.page)
   const dispatch = useDispatch();
-  const [updateBook, { isLoading2 }] = useUpdateBookMutation()
+  const [updateTour, { isLoading2 }] = useUpdateTourMutation()
   const { id } = useParams()
   const history = props.history()
-  const bookItemsAll = props.bookItems
-  const setBookItemsAll = props.setBookItems
+  const tourItemsAll = props.tourItems
+  const setTourItemsAll = props.setTourItems
   // console.log('edit id ',useParams(),props.history())
-  // console.log('success edit',store.getState().books.bookItems)
+  // console.log('success edit',store.getState().tours.tourItems)
 
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
@@ -37,7 +37,7 @@ export default function EditBook(props) {
 
   const fetchProduct = async () => {
     
-    apiClient.get(`${get_book_url}/${id}`).then(({data})=>{
+    apiClient.get(`${get_tour_url}/${id}`).then(({data})=>{
       const { title, author } = data.data
       setTitle(title)
       setAuthor(author)
@@ -69,7 +69,7 @@ export default function EditBook(props) {
       'title' : title,
       'author' : author,
     }
-    updateBook(json_data).unwrap()
+    updateTour(json_data).unwrap()
     .then((payload) => {
       
       Swal.fire({
@@ -77,7 +77,7 @@ export default function EditBook(props) {
         text: payload.data.message
       })
          
-      // setBookItemsAll(  bookItemsAll.map((item, index) => {  if( item.id == id){ return payload.data.data }else{ return item } })  )
+      // setTourItemsAll(  tourItemsAll.map((item, index) => {  if( item.id == id){ return payload.data.data }else{ return item } })  )
       props.setPage(props.page)
       // refetch()
       history.push('/')
@@ -101,7 +101,7 @@ export default function EditBook(props) {
         <div className="col-12 col-sm-12 col-md-6">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Update Book</h4>
+              <h4 className="card-title">Update Tour</h4>
               <hr />
               <div className="form-wrapper">
                 {

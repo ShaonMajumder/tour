@@ -3,11 +3,11 @@ import { Redirect } from 'react-router-dom';
 import apiClient,{login_url,csrf_token_url } from '../services/api';
 import Cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
-import { setLoggedIn, setLoggedOut} from '../reducers/bookSlice';
+import { setLoggedIn, setLoggedOut} from '../reducers/tourSlice';
 
 const Login = (props) => {
     const dispatch = useDispatch();
-    const isLoggedIn = useSelector((store) => store.books.isLoggedIn);
+    const isLoggedIn = useSelector((store) => store.tours.isLoggedIn);
     // console.log("If is logged in",isLoggedIn)
 
 
